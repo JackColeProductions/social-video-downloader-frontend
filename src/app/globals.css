@@ -1,0 +1,517 @@
+@import "tailwindcss";
+
+/* Palette sampled from the design mockup (public/mockup.png). The site is dark-only. */
+:root {
+  --bg: #070b16;
+  --fg: #f2f4fd;
+  --muted: #9aa3bd;
+  --subtle: #6f7b93;
+  --panel: #0b111c;
+  --panel-border: #1a2335;
+  --chip: #0c131f;
+  --chip-border: #1c2539;
+  --tile: #0a0f1a;
+  --tile-border: #182131;
+  --cyan: #22a6ff;
+  --indigo: #5b5cff;
+  --violet: #8b4dff;
+  --magenta: #c04dff;
+  --success: #22d3a0;
+  --danger: #ff5c7a;
+  /* Moves the hero, laid out in mockup coordinates, down the page (see the media query below). */
+  --canvas-top: 0px;
+  color-scheme: dark;
+}
+
+/*
+ * Desktop sizes are in rem: 1rem is 16 design px on a canvas 1280+ wide and 880 tall. Scaling the
+ * root font size with the window fits the whole page on one screen, at most at the design's own
+ * size. --canvas-top moves the hero down 3rem so it sits centred above the footer, plus half the
+ * extra height of windows taller than the canvas. Phones and tablets keep 16px and scroll as usual.
+ */
+@media (width >= 64rem) {
+  html {
+    font-size: clamp(9px, min(100svh / 55, 100vw / 80), 16px);
+  }
+  :root {
+    --canvas-top: calc(max(0px, (100svh - 55rem) / 2) + 3rem);
+  }
+}
+
+/* Small print stays at 11px or more when the page scales down. */
+@theme {
+  --text-xs: max(11px, 0.75rem);
+  --text-sm: max(11px, 0.875rem);
+  --text-base: max(11px, 1rem);
+}
+
+/* Font size in design px: text-dp-17 is 17px at full size, scales with the page, never below 11px. */
+@utility text-dp-* {
+  font-size: max(min(11px, calc(--value(number) * 1px)), calc(--value(number) * 1rem / 16));
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-panel: var(--panel);
+  --color-panel-border: var(--panel-border);
+  --color-chip: var(--chip);
+  --color-chip-border: var(--chip-border);
+  --color-tile: var(--tile);
+  --color-tile-border: var(--tile-border);
+  --color-cyan: var(--cyan);
+  --color-indigo: var(--indigo);
+  --color-violet: var(--violet);
+  --color-magenta: var(--magenta);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --animate-indeterminate: indeterminate 1.3s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-rise: rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-fade: fade 0.4s ease-out both;
+  --animate-tile-in: tile-in 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+  --animate-success-pop: success-pop 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-success-ping: success-ping 1s cubic-bezier(0.2, 0.7, 0.3, 1) 0.25s both;
+  --animate-check-draw: check-draw 0.45s cubic-bezier(0.6, 0, 0.3, 1) 0.2s both;
+  --animate-spark: spark 0.8s cubic-bezier(0.2, 0.7, 0.3, 1) 0.3s both;
+  --animate-glint: glint 6s cubic-bezier(0.45, 0, 0.25, 1) 1.2s infinite both;
+
+  /* The "download started" check: the disc pops in, the tick draws, a ring and sparks fly out. */
+  @keyframes success-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    60% {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+  }
+
+  @keyframes success-ping {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    15% {
+      opacity: 0.7;
+    }
+    to {
+      opacity: 0;
+      transform: scale(1.9);
+    }
+  }
+
+  @keyframes check-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+  }
+
+  @keyframes spark {
+    from {
+      opacity: 0;
+      transform: translateY(0) scale(0.6);
+    }
+    25% {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-1.75rem) scale(0.3);
+    }
+  }
+
+  --animate-float-card: float-card 8s ease-in-out infinite;
+
+  /* A band of light crossing the hero badge, then a pause. */
+  @keyframes glint {
+    0% {
+      transform: translateX(-120%);
+    }
+    30%,
+    100% {
+      transform: translateX(320%);
+    }
+  }
+
+  --animate-float-badge: float-badge 6s ease-in-out infinite;
+
+  /*
+   * The hero's cards and badges float: cards drift slowly, badges bob a bit more with a tilt.
+   * Each element sets its own period and offset (hero-decor.tsx), so they never move in step.
+   */
+  @keyframes float-card {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+    50% {
+      transform: translate3d(0.125rem, -0.625rem, 0) rotate(0.8deg);
+    }
+  }
+
+  @keyframes float-badge {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    }
+    50% {
+      transform: translate3d(-0.25rem, -0.875rem, 0) rotate(-3deg) scale(1.04);
+    }
+  }
+
+  @keyframes tile-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem) scale(0.85);
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes indeterminate {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(260%);
+    }
+  }
+
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-size: var(--text-base);
+}
+
+@layer components {
+  /* "from Anywhere" */
+  .text-gradient-hero {
+    background: linear-gradient(90deg, #d05af5 0%, #a35cf6 22%, #6a66f7 46%, #3f8af8 72%, #38a6f8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Product name in the hero badge: white easing into lavender. */
+  .text-gradient-badge {
+    background: linear-gradient(90deg, #ffffff 0%, #e1e7ff 45%, #b9a8ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-brand {
+    background: linear-gradient(90deg, #4aa6ff 0%, #8b6cff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Primary call-to-action fill: cyan -> indigo -> violet -> magenta. */
+  .bg-gradient-cta {
+    background: linear-gradient(100deg, #1fb0ff 0%, #4a6bff 38%, #7b4dff 68%, #c24dff 100%);
+  }
+
+  .bg-gradient-progress {
+    background: linear-gradient(90deg, #1fb0ff 0%, #5b5cff 55%, #b04dff 100%);
+  }
+
+  /*
+   * Gradient border drawn by a masked pseudo-element. Set --ring (any background) and
+   * optionally --ring-width on the element; it inherits the element's border-radius.
+   */
+  .gradient-ring {
+    position: relative;
+    isolation: isolate;
+  }
+  .gradient-ring::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    /* 1px rings look thinner on curves than on straight edges; 1.5px reads evenly all round. */
+    padding: var(--ring-width, 1.5px);
+    background: var(--ring, linear-gradient(90deg, var(--cyan), var(--violet)));
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
+    pointer-events: none;
+  }
+
+  /* While loading (data-loading), a bright arc sweeps around the ring. */
+  .gradient-ring[data-loading]::before {
+    background: conic-gradient(
+      from var(--sweep),
+      rgb(30 175 255 / 0.3),
+      #3ad2ff 10%,
+      #8b4dff 24%,
+      rgb(91 92 255 / 0.3) 38%,
+      rgb(30 175 255 / 0.3)
+    );
+    animation: sweep 1.4s linear infinite;
+  }
+
+  /* Selected chip: cyan-to-violet ring with a soft glow. */
+  /* Solid backgrounds (not gradients) so selecting a chip can fade between colours. */
+  .chip-selected {
+    --ring: linear-gradient(120deg, #1aa8ff 0%, #4f63ff 50%, #9b4dff 100%);
+    --ring-width: 2px;
+    background-color: #111936;
+    box-shadow:
+      0 0 18px -2px rgb(37 140 255 / 0.45),
+      0 0 26px -6px rgb(139 77 255 / 0.5);
+  }
+
+  .chip-selected-violet {
+    --ring: linear-gradient(120deg, #a35cff 0%, #8b4dff 100%);
+    --ring-width: 2px;
+    background-color: #131737;
+    box-shadow: 0 0 22px -4px rgb(150 80 255 / 0.55);
+  }
+
+  /*
+   * Quality cards: glass lit from above (brighter top edge, lighter top) with a hint of the tier's
+   * colour (--tier) in the corner, lifting on hover. The chosen one gets the cyan-to-violet ring,
+   * an outer glow, a glow inside (.quality-glow, faded in) and one sweep of light (.quality-shine).
+   * Every state has the same four shadows, so they blend into each other; the second one is a
+   * tint over the whole card.
+   */
+  .quality-card {
+    /* The ring is only shown (faded in) once chosen; set here so it keeps its look while fading out. */
+    --ring: linear-gradient(120deg, #1aa8ff 0%, #4f63ff 50%, #9b4dff 100%);
+    --ring-width: 2px;
+    border-color: rgb(255 255 255 / 0.09) rgb(255 255 255 / 0.06) rgb(255 255 255 / 0.04);
+    background:
+      radial-gradient(110% 80% at 0% 0%, rgb(var(--tier) / 0.16), transparent 62%),
+      linear-gradient(180deg, #131b2e, #0d1322);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.06),
+      inset 0 0 0 100vmax rgb(255 255 255 / 0),
+      0 10px 20px -14px rgb(0 0 0 / 0.9),
+      0 0 0 0 transparent;
+  }
+  .quality-card[aria-checked="false"]:enabled:hover {
+    border-color: rgb(255 255 255 / 0.16) rgb(255 255 255 / 0.1) rgb(255 255 255 / 0.06);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.1),
+      inset 0 0 0 100vmax rgb(255 255 255 / 0.03),
+      0 16px 26px -14px rgb(0 0 0 / 0.95),
+      0 0 0 0 transparent;
+  }
+  .quality-card[aria-checked="true"] {
+    border-color: transparent;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      inset 0 0 0 100vmax rgb(255 255 255 / 0),
+      0 0 18px -2px rgb(37 140 255 / 0.45),
+      0 0 26px -6px rgb(139 77 255 / 0.5);
+  }
+  .quality-glow {
+    background:
+      radial-gradient(90% 75% at 50% 120%, rgb(118 84 255 / 0.4), transparent 70%),
+      radial-gradient(70% 60% at 0% 0%, rgb(34 166 255 / 0.18), transparent 70%),
+      #10163a;
+  }
+  .quality-card[aria-checked="true"] .quality-shine::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 0.13) 50%, transparent 70%);
+    animation: quality-shine 0.9s 0.05s ease-out both;
+  }
+
+  /* Choice chips (role="radio") always draw their ring and fade it in when checked. */
+  .gradient-ring[role="radio"]::before {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .gradient-ring[role="radio"][aria-checked="true"]::before {
+    opacity: 1;
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, #111a2b 0%, #18233a 50%, #111a2b 100%);
+    background-size: 200% 100%;
+  }
+}
+
+@property --sweep {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes sweep {
+  to {
+    --sweep: 360deg;
+  }
+}
+
+/*
+ * While a video is being fetched (data-fetching on <html>): the ribbons light up and comets of
+ * light run along them into the link input, and a band of light scans across the input. The
+ * comet layers (trail, body, head) differ only in --tail, the dash length; their heads stay
+ * together because each one's offset is shifted by its own length. Paused and hidden otherwise.
+ */
+.ribbon-glow,
+.ribbon-line {
+  transition: opacity 0.6s;
+}
+:root[data-fetching] .ribbon-glow {
+  opacity: 0.65;
+}
+:root[data-fetching] .ribbon-line {
+  opacity: 0.95;
+}
+
+.ribbon-pulse {
+  --tail: 0.16;
+  stroke-dasharray: var(--tail) calc(1.56 - var(--tail));
+  stroke-dashoffset: calc(var(--flow) + var(--tail));
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity 0.6s;
+  animation: ribbon-flow 1.8s ease-in infinite paused;
+}
+.ribbon-pulse.later {
+  animation-delay: -0.9s;
+}
+:root[data-fetching] .ribbon-pulse {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+/* Registered so it interpolates (an offset written with var() inside @keyframes would not). */
+@property --flow {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1.56;
+}
+
+@keyframes ribbon-flow {
+  from {
+    --flow: 1.56;
+  }
+  to {
+    --flow: 0;
+  }
+}
+
+.input-scan::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgb(91 140 255 / 0.2) 40%, rgb(139 92 255 / 0.3) 62%, transparent);
+  animation: input-scan 1.7s ease-in-out infinite;
+}
+
+@keyframes input-scan {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 230% 0;
+  }
+}
+
+/*
+ * The "More platforms" dialog rises in over a dimmed, blurred page and sinks away when closed
+ * (data-closing is set while the closing animation plays).
+ */
+.platforms-dialog::backdrop {
+  background: rgb(3 6 15 / 0.62);
+  backdrop-filter: blur(8px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .platforms-dialog[open] {
+    animation: dialog-in 0.45s cubic-bezier(0.22, 1.2, 0.36, 1) both;
+  }
+  .platforms-dialog[open]::backdrop {
+    animation: backdrop-in 0.35s ease-out both;
+  }
+  .platforms-dialog[data-closing] {
+    animation: dialog-out 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
+  }
+  .platforms-dialog[data-closing]::backdrop {
+    animation: backdrop-out 0.2s ease-in forwards;
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem) scale(0.94);
+  }
+}
+@keyframes dialog-out {
+  to {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.96);
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes quality-shine {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ribbon-pulse,
+  .input-scan,
+  .quality-shine {
+    display: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 2.5s !important;
+    transition-duration: 0s !important;
+  }
+}
